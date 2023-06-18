@@ -11,6 +11,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 
 @Component
@@ -31,8 +33,10 @@ public class LogAop {
     public Object apiAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed();
-        //打印出参
-        log.info("Response Args  : {}", new Gson().toJson(result));
+        if (!(result instanceof HttpServletResponse)) {
+            // 打印出参
+            log.info("Response Args  : {}", new Gson().toJson(result));
+        }
         //执行耗时
         log.info("Time-Consuming : {} ms",System.currentTimeMillis()-startTime,LINE_SEPARATOR);
         return result;
@@ -55,7 +59,12 @@ public class LogAop {
         // 打印请求的 IP
         log.info("IP             : {}", request.getRemoteAddr());
         // 打印请求入参
-        log.info("Request Args   : {}", new Gson().toJson(joinPoint.getArgs()));
+//        log.info("Request Args   : {}", new Gson().toJson(joinPoint.getArgs()));
+        Object[] args = Arrays.stream(joinPoint.getArgs())
+                .filter(arg -> !(arg instanceof HttpServletResponse))
+                .filter(arg -> !(arg instanceof HttpServletRequest))
+                .toArray();
+        log.info("Request Args   : {}", new Gson().toJson(args));
     }
 
 

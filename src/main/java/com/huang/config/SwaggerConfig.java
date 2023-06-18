@@ -33,8 +33,8 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         Contact contact = new Contact("联系人名字", "none", "联系人邮箱");
         return new ApiInfo(
-                "抖店mock接口", // 标题
-                "用于对抖店接口进行mock模拟", // 描述
+                "Blog接口", // 标题
+                "Blog系统后端系统开发", // 描述
                 "v1.0", // 版本
                 "http://terms.service.url/组织链接", // 组织链接
                 contact, // 联系人信息

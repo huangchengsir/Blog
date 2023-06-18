@@ -16,7 +16,7 @@ public class ShiroConfig {
     public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("security") DefaultWebSecurityManager security){
         ShiroFilterFactoryBean filter = new ShiroFilterFactoryBean();
 
-/*        * 权限设置
+/*      * 权限设置
         * anon：无需认证即可访问
         * authc：必须认证才可以访问
         * user：必须拥有“记住我”才能用
@@ -28,10 +28,11 @@ public class ShiroConfig {
 
         Map<String, String> map = new LinkedHashMap<>();
         //授权
-        map.put("/**", "anon");
+        map.put("/logout", "authc");
+        map.put("/login","anon");
         filter.setFilterChainDefinitionMap(map);
         //设置登录页
-        filter.setLoginUrl("/login");
+//        filter.setLoginUrl("/login");
         //设置授权成功后页面，一般不用
 //        factoryBean.setSuccessUrl("");
         //设置权限验证失败后页面
@@ -52,6 +53,7 @@ public class ShiroConfig {
 
     @Bean
     public Realme realme(){
+
         return new Realme();
     }
 }

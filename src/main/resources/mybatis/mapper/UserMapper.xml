@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.Dao.UserMapper">
+    <select id="searchAll" resultType="user">
+        SELECT * from user;
+    </select>
+    <select id="searchByid" resultType="user">
+        SELECT * from user where id =#{id};
+    </select>
+    <update id="Update" parameterType="com.huang.pojo.User">
+        UPDATE user set status =#{status} where id =#{id}
+    </update>
+    <delete id="DeleteByid">
+        delete from user where id =#{id}
+    </delete>
+    <insert id="Insert" parameterType="user">
+        INSERT into user value(#{username},#{avatar},#{email},#{password},#{status},#{created},#{last_login});
+    </insert>
+    <select id="searchByname" resultType="user">
+        select * from user where username = #{name}
+    </select>
+</mapper>

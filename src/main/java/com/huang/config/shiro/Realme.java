@@ -1,15 +1,20 @@
 package com.huang.config.shiro;
 
-import org.apache.shiro.SecurityUtils;
+import com.huang.Dao.UserMapper;
+import com.huang.pojo.User;
+import com.huang.service.Imp.UserServiceImp;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.credential.Md5CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Realme extends AuthorizingRealm {
-
+    @Autowired
+    private UserServiceImp userServiceImp;
     //授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
@@ -28,13 +33,16 @@ public class Realme extends AuthorizingRealm {
     //认证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        String name = "admin";
-        String password = "123456";
         UsernamePasswordToken usertoken = (UsernamePasswordToken) token;
-
+        User user = userServiceImp.searchByname(usertoken.getUsername());
+        if (user == null){
+            return null;
+        }
+        String name = user.getUsername();
+        String password = user.getPassword();
         if (!usertoken.getUsername().equals(name)){
             return null;
         }
-        return new SimpleAuthenticationInfo("",password,"");
+        return new SimpleAuthenticationInfo(user,password,"");
     }
 }
