@@ -4,10 +4,12 @@ import com.huang.pojo.Blog;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public interface BlogService {
-    Blog searchAll();
+    List<Blog> searchAll(Integer page);
     Blog searchByid(@Param("id") int id);
     void Update(Blog blog);
     void DeleteByid(@Param("id") int id);

@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -68,8 +69,10 @@ class ApplicationTests {
 //        System.out.println(token);
 //        String s = DigestUtils.md5DigestAsHex("20010906".getBytes()).toUpperCase();
 //        System.out.println(s);
-        Blog blog = blogService.searchByid(1);
-        System.out.println(blog.toString());
+        List<Blog> blogs = blogService.searchAll(5);
+        for (Blog blog : blogs) {
+            System.out.println(blog);
+        }
 
 
     }

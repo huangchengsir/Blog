@@ -1,11 +1,13 @@
 package com.huang.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.auth0.jwt.interfaces.Claim;
 import com.github.pagehelper.PageHelper;
 import com.huang.Utils.JWTUtils;
 import com.huang.Utils.Result;
 import com.huang.pojo.Blog;
+import com.huang.pojo.PageData;
 import com.huang.pojo.User;
 import com.huang.service.BlogService;
 import com.huang.service.UserService;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -31,20 +34,28 @@ public class BlogController {
     private JWTUtils jwtUtils;
     @Autowired
     private BlogService blogService;
+    @Autowired
+    private PageData pageData;
 
     @ApiOperation("博客列表拉取接口")
     @GetMapping("/blogs")
-    public Result list(@RequestParam(defaultValue = "1") Integer currentPage){
+    public Result list(@RequestParam(defaultValue = "5") Integer currentPage){
         PageHelper.startPage(1,currentPage);
-        Blog blog = blogService.searchAll();
-        return Result.succ(blog);
+        List<Blog> blogs = blogService.searchAll(currentPage);
+        log.info(blogs.toString());
+        pageData.setBlogs(blogs);
+        pageData.setCurrent(currentPage);
+        pageData.setSize(blogs.size());
+        pageData.setTotal(blogs.size());
+        return Result.succ(pageData);
     }
 
     @ApiOperation("博客详细信息接口")
-    @GetMapping("/detail/{id}")
+    @GetMapping("/blog/{id}")
     public Result list(@PathVariable(name = "id") int id){
         Blog blog = blogService.searchByid(id);
         Assert.notNull(blog,"该博客已被删除");
+
         return Result.succ(blog);
     }
 
@@ -61,17 +72,17 @@ public class BlogController {
         if(blog.getId() != 0){
             tmp = blogService.searchByid(blog.getId());
             Assert.isTrue(tmp.getUser_id() == id, "没有权限编辑");
+            BeanUtil.copyProperties(blog, tmp, "id", "userId", "created", "status");
+            blogService.Update(tmp);
         } else {
             tmp = new Blog();
-            tmp.setTitle(blog.getTitle());
-            tmp.setDescription(blog.getDescription());
-            tmp.setContent(blog.getContent());
+            tmp.setUser_id(id);
+            tmp.setCreated(LocalDateTime.now());
+            tmp.setStatus(0);
+            BeanUtil.copyProperties(blog, tmp, "id", "user_id", "created", "status");
+            log.info(tmp.toString());
+            blogService.Insert(tmp);
         }
-        tmp.setCreated(LocalDateTime.now());
-        tmp.setStatus(0);
-        tmp.setUser_id(blog.getId());
-        blogService.Update(tmp);
-
         return Result.succ("编辑成功");
     }
 }

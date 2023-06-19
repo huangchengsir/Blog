@@ -6,14 +6,16 @@ import com.huang.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class BlogServiceImp implements BlogService {
     @Autowired
     private BlogMapper blogMapper;
     @Override
-    public Blog searchAll() {
-        return blogMapper.searchAll();
+    public List<Blog> searchAll(Integer page) {
+        return blogMapper.searchAll(page);
     }
 
     @Override
