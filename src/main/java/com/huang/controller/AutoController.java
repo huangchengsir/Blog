@@ -40,6 +40,7 @@ public class AutoController {
                         ){
         String username = (String) map.get("username");
         String password = (String) map.get("password");
+        log.info("登录传入密码为:"+password);
         Subject subject = SecurityUtils.getSubject();
         String Md5pwd = DigestUtils.md5DigestAsHex(password.getBytes()).toUpperCase();
         UsernamePasswordToken token = new UsernamePasswordToken(username,Md5pwd);
@@ -47,6 +48,7 @@ public class AutoController {
         hashmap.put("username",username);
         hashmap.put("password",password);
         User user = userServiceImp.searchByname(username);
+        log.info(user.toString());
         log.info("进入了登录方法");
         try {
             subject.login(token);
@@ -55,7 +57,7 @@ public class AutoController {
             redisUtil.set("Authorization",jwt,10800);
             Result result = Result.succ(200, "登录成功", user);
             response.setHeader("Authorization", jwt);
-            response.setHeader("Access-control-Expose-Headers", "Authorization");
+            response.setHeader("Access-control-Expose-Headers", "Authorization, Set-Cookie");
             return result;
         } catch (UnknownAccountException e) {
             Result result = Result.fail(500, "用户名错误", "请重新输入");

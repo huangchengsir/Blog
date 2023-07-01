@@ -47,8 +47,15 @@ public class JWTUtils {
     /***
      * 验证token
      */
-    public void verify(String token){
-        JWT.require(Algorithm.HMAC256(this.secret)).build().verify(token);
+    public boolean verify(String token){
+        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(this.secret)).build().verify(token);
+        if (decodedJWT ==null){
+            return false;
+        }
+        else {
+            return true;
+        }
+
     }
 
     /***

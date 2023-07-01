@@ -3,6 +3,7 @@ package com.huang.config.shiro;
 import com.huang.Dao.UserMapper;
 import com.huang.pojo.User;
 import com.huang.service.Imp.UserServiceImp;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.Md5CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -11,7 +12,9 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 
+@Slf4j
 public class Realme extends AuthorizingRealm {
     @Autowired
     private UserServiceImp userServiceImp;
@@ -39,10 +42,11 @@ public class Realme extends AuthorizingRealm {
             return null;
         }
         String name = user.getUsername();
-        String password = user.getPassword();
+        String password = DigestUtils.md5DigestAsHex(user.getPassword().getBytes()).toUpperCase();
+        log.info(user.toString());
         if (!usertoken.getUsername().equals(name)){
             return null;
         }
-        return new SimpleAuthenticationInfo(user,password,"");
+        return new SimpleAuthenticationInfo(user,password,"MyRealm");
     }
 }

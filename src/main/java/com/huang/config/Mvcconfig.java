@@ -28,7 +28,7 @@ public class Mvcconfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(diyInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login","/blogs","/blog/{id}");
+                .excludePathPatterns("/login");
     }
 
     @Override

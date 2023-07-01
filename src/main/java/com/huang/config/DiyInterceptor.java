@@ -44,10 +44,11 @@ public class DiyInterceptor implements HandlerInterceptor {
             return false;
         }
         String token =request.getHeader("Authorization");
+        log.info(token);
         HashMap<String, Object> map = new HashMap<>();
-        log.info("获取jwtUtils"+jwtUtils.toString());
         try{
             jwtUtils.verify(token);
+            log.info("jwt验证通过");
             return true;
         } catch (TokenExpiredException e){
             map.put("state",false);
@@ -67,6 +68,7 @@ public class DiyInterceptor implements HandlerInterceptor {
             map.put("state",false);
             map.put("msg", "无效token，请重新登录！");
         }
+        log.info(map.toString());
         String json = new ObjectMapper().writeValueAsString(map);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().println(json);

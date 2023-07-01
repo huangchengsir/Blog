@@ -9,6 +9,7 @@ import com.huang.Utils.RedisUtil;
 import com.huang.pojo.Blog;
 import com.huang.pojo.User;
 import com.huang.service.BlogService;
+import com.huang.service.Imp.BlogServiceImp;
 import com.huang.service.Imp.UserServiceImp;
 import com.huang.service.UserService;
 import org.springframework.util.DigestUtils;
@@ -69,10 +70,10 @@ class ApplicationTests {
 //        System.out.println(token);
 //        String s = DigestUtils.md5DigestAsHex("20010906".getBytes()).toUpperCase();
 //        System.out.println(s);
-        List<Blog> blogs = blogService.searchAll(5);
-        for (Blog blog : blogs) {
-            System.out.println(blog);
-        }
+//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IjIwMDEwOTA2IiwiZXhwIjoxNjg3Njk4NTA2LCJ1c2VybmFtZSI6IkNoYXJteSJ9.hdOM0qJPVlvyi0ied0RFcnFsC8crrIde3K-iN7Wvzc0";
+//        jwtUtils.verify(token);
+          blogService.DeleteByid(2);
+
 
 
     }

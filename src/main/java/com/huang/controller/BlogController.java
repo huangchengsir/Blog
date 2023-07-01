@@ -39,7 +39,7 @@ public class BlogController {
 
     @ApiOperation("博客列表拉取接口")
     @GetMapping("/blogs")
-    public Result list(@RequestParam(defaultValue = "5") Integer currentPage){
+    public Result list(@RequestParam(defaultValue = "10") Integer currentPage){
         PageHelper.startPage(1,currentPage);
         List<Blog> blogs = blogService.searchAll(currentPage);
         log.info(blogs.toString());
@@ -73,6 +73,7 @@ public class BlogController {
             tmp = blogService.searchByid(blog.getId());
             Assert.isTrue(tmp.getUser_id() == id, "没有权限编辑");
             BeanUtil.copyProperties(blog, tmp, "id", "userId", "created", "status");
+            tmp.setUser_id(id);
             blogService.Update(tmp);
         } else {
             tmp = new Blog();
@@ -84,5 +85,12 @@ public class BlogController {
             blogService.Insert(tmp);
         }
         return Result.succ("编辑成功");
+    }
+    @ApiOperation("博客删除接口提供")
+    @PostMapping("/blogs/delete")
+    public Result delete(@RequestParam("id")int blogid){
+        log.info("进入了删除博客方法");
+        blogService.DeleteByid(blogid);
+        return Result.succ("删除成功");
     }
 }
