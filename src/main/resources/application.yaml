@@ -26,7 +26,8 @@ spring:
     maxPoolPreparedStatementPerConnectionSize: 20
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-#  redis配置文件
+    # 开放静态资源
+  #  redis配置文件
   redis:
     host: 47.109.104.235
     port: 6379
@@ -39,6 +40,7 @@ spring:
         max-wait: -1ms
     lettuce:
       shutdown-timeout: 0ms
+
 
 ##整合mybatis
 mybatis:
@@ -59,3 +61,4 @@ pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true
   params: count=countSql
+

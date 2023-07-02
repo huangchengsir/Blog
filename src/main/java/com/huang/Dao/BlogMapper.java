@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 @Mapper
 public interface BlogMapper {
-    List<Blog> searchAll(Integer page);
+    List<Blog> searchAll(Integer page, int id);
     Blog searchByid(@Param("id") int id);
     void Update(Blog blog);
     void DeleteByid(@Param("id") int id);

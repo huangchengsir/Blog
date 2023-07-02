@@ -10,13 +10,18 @@
         SELECT * from user where id =#{id};
     </select>
     <update id="Update" parameterType="com.huang.pojo.User">
-        UPDATE user set status =#{status} where id =#{id}
+        UPDATE user set username = #{username},
+        avatar = #{avatar},
+        email = #{email},
+        password = #{password}
+        where id =#{id}
     </update>
     <delete id="DeleteByid">
         delete from user where id =#{id}
     </delete>
     <insert id="Insert" parameterType="user">
-        INSERT into user value(#{username},#{avatar},#{email},#{password},#{status},#{created},#{last_login});
+        INSERT into user(username,avatar,email,`password`,`status`,created,last_login)
+        value(#{username},#{avatar},#{email},#{password},1,NOW(),NOW());
     </insert>
     <select id="searchByname" resultType="user">
         select * from user where username = #{name}

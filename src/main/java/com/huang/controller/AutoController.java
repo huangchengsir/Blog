@@ -6,6 +6,7 @@ import com.huang.Utils.RedisUtil;
 import com.huang.Utils.Result;
 import com.huang.pojo.User;
 import com.huang.service.Imp.UserServiceImp;
+import com.huang.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -32,6 +33,8 @@ public class AutoController {
     private JWTUtils jwtUtils;
     @Autowired
     private UserServiceImp userServiceImp;
+    @Autowired
+    private UserService userService;
 
     @ApiOperation("博客登录接口")
     @PostMapping("/login")
@@ -45,13 +48,15 @@ public class AutoController {
         String Md5pwd = DigestUtils.md5DigestAsHex(password.getBytes()).toUpperCase();
         UsernamePasswordToken token = new UsernamePasswordToken(username,Md5pwd);
         HashMap<String, String> hashmap = new HashMap<>();
+        //获取用户id
         hashmap.put("username",username);
         hashmap.put("password",password);
-        User user = userServiceImp.searchByname(username);
-        log.info(user.toString());
+//        log.info(user.toString());
         log.info("进入了登录方法");
         try {
+            User user = userServiceImp.searchByname(username);
             subject.login(token);
+            hashmap.put("userId",String.valueOf(user.getId()));
             String jwt = jwtUtils.getToken(hashmap);
             log.info("获取得jwt认证为:"+jwt);
             redisUtil.set("Authorization",jwt,10800);

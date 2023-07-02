@@ -19,8 +19,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,9 +42,14 @@ public class BlogController {
 
     @ApiOperation("博客列表拉取接口")
     @GetMapping("/blogs")
-    public Result list(@RequestParam(defaultValue = "10") Integer currentPage){
+    public Result list(@RequestParam(defaultValue = "10") Integer currentPage,
+                        HttpServletRequest request){
+        String token =request.getHeader("Authorization");
+        String username = String.valueOf(jwtUtils.getTokenInfo(token).getClaim("username")).trim().replace("\"", "");
+        log.info("用户名："+username);
+        User user = userService.searchByname(username);
         PageHelper.startPage(1,currentPage);
-        List<Blog> blogs = blogService.searchAll(currentPage);
+        List<Blog> blogs = blogService.searchAll(currentPage,user.getId());
         log.info(blogs.toString());
         pageData.setBlogs(blogs);
         pageData.setCurrent(currentPage);
@@ -92,5 +100,38 @@ public class BlogController {
         log.info("进入了删除博客方法");
         blogService.DeleteByid(blogid);
         return Result.succ("删除成功");
+    }
+
+    @ApiOperation("图片上传接口")
+    @PostMapping("/upload-image")
+    public Result picture(@RequestParam("image") MultipartFile image){
+        if (image.isEmpty()) {
+            return Result.fail("上传的图片为空");
+        }
+
+        // 获取保存图片的目录路径
+        String imagesDir = "src/main/resources/static/images";
+        String savePath = System.getProperty("user.dir") + File.separator + imagesDir;
+
+        // 创建目录
+        File dir = new File(savePath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        try {
+            // 生成保存图片的文件路径
+            String fileName = image.getOriginalFilename();
+            String filePath = savePath + File.separator + fileName;
+            // 保存图片
+            image.transferTo(new File(filePath));
+
+            // 返回图片访问路径
+            String imageUrl = "/images/" + fileName;
+            return Result.succ(imageUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail("图片上传失败");
+        }
     }
 }

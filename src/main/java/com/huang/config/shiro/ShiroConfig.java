@@ -41,6 +41,7 @@ public class ShiroConfig {
         map.put("/blog/edit", "authc");
         map.put("/blogs/delete", "authc");
         map.put("/login","anon");
+        map.put("/user/register","anon");
 //        map.put("/**", "authc");
         filter.setFilterChainDefinitionMap(map);
         //设置登录页

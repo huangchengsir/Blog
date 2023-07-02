@@ -72,7 +72,9 @@ class ApplicationTests {
 //        System.out.println(s);
 //        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IjIwMDEwOTA2IiwiZXhwIjoxNjg3Njk4NTA2LCJ1c2VybmFtZSI6IkNoYXJteSJ9.hdOM0qJPVlvyi0ied0RFcnFsC8crrIde3K-iN7Wvzc0";
 //        jwtUtils.verify(token);
-          blogService.DeleteByid(2);
+
+        List<Blog> blogs = blogService.searchAll(5,1);
+        System.out.println(blogs.toString());
 
 
 

@@ -30,6 +30,8 @@ public class DiyInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         log.info("进入了拦截器方法");
+        log.info(request.getRequestURI());
+        log.info(request.getPathInfo());
         //解决跨域问题
         HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
         HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
