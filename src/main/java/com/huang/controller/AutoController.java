@@ -4,7 +4,9 @@ package com.huang.controller;
 import com.huang.Utils.JWTUtils;
 import com.huang.Utils.RedisUtil;
 import com.huang.Utils.Result;
+import com.huang.pojo.Blog;
 import com.huang.pojo.User;
+import com.huang.service.BlogService;
 import com.huang.service.Imp.UserServiceImp;
 import com.huang.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -58,9 +61,9 @@ public class AutoController {
             subject.login(token);
             hashmap.put("userId",String.valueOf(user.getId()));
             String jwt = jwtUtils.getToken(hashmap);
-            log.info("获取得jwt认证为:"+jwt);
             redisUtil.set("Authorization",jwt,10800);
             Result result = Result.succ(200, "登录成功", user);
+            userService.Updatetime(username);
             response.setHeader("Authorization", jwt);
             response.setHeader("Access-control-Expose-Headers", "Authorization, Set-Cookie");
             return result;

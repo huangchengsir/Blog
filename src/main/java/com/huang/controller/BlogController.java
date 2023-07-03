@@ -4,6 +4,7 @@ package com.huang.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.auth0.jwt.interfaces.Claim;
 import com.github.pagehelper.PageHelper;
+import com.huang.Utils.ChineseScan;
 import com.huang.Utils.JWTUtils;
 import com.huang.Utils.Result;
 import com.huang.pojo.Blog;
@@ -25,7 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -50,7 +54,6 @@ public class BlogController {
         User user = userService.searchByname(username);
         PageHelper.startPage(1,currentPage);
         List<Blog> blogs = blogService.searchAll(currentPage,user.getId());
-        log.info(blogs.toString());
         pageData.setBlogs(blogs);
         pageData.setCurrent(currentPage);
         pageData.setSize(blogs.size());
@@ -104,11 +107,13 @@ public class BlogController {
 
     @ApiOperation("图片上传接口")
     @PostMapping("/upload-image")
-    public Result picture(@RequestParam("image") MultipartFile image){
+    public Result picture(@RequestParam("image") MultipartFile image,
+                          HttpServletRequest request){
+        String token =request.getHeader("Authorization");
+        String localusername = String.valueOf(jwtUtils.getTokenInfo(token).getClaim("username")).trim().replace("\"", "");
         if (image.isEmpty()) {
             return Result.fail("上传的图片为空");
         }
-
         // 获取保存图片的目录路径
         String imagesDir = "src/main/resources/static/images";
         String savePath = System.getProperty("user.dir") + File.separator + imagesDir;
@@ -122,10 +127,16 @@ public class BlogController {
         try {
             // 生成保存图片的文件路径
             String fileName = image.getOriginalFilename();
+            int index = fileName.lastIndexOf(".");
+            if (index >= 0 && index + 1 < fileName.length()) {
+                String extension = fileName.substring(index);
+                if (ChineseScan.containsChinese(fileName)){
+                    fileName = localusername+ UUID.randomUUID().toString()+extension;
+                }
+            }
             String filePath = savePath + File.separator + fileName;
             // 保存图片
             image.transferTo(new File(filePath));
-
             // 返回图片访问路径
             String imageUrl = "/images/" + fileName;
             return Result.succ(imageUrl);
@@ -133,5 +144,63 @@ public class BlogController {
             e.printStackTrace();
             return Result.fail("图片上传失败");
         }
+    }
+    @ApiOperation("注册图片上传接口")
+    @PostMapping("/regis_upload-image")
+    public Result regispicture(@RequestParam("image") MultipartFile image){
+        String localusername = "Newuser";
+        if (image.isEmpty()) {
+            return Result.fail("上传的图片为空");
+        }
+        // 获取保存图片的目录路径
+        String imagesDir = "src/main/resources/static/images";
+        String savePath = System.getProperty("user.dir") + File.separator + imagesDir;
+
+        // 创建目录
+        File dir = new File(savePath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        try {
+            // 生成保存图片的文件路径
+            String fileName = image.getOriginalFilename();
+            int index = fileName.lastIndexOf(".");
+            if (index >= 0 && index + 1 < fileName.length()) {
+                String extension = fileName.substring(index);
+                if (ChineseScan.containsChinese(fileName)){
+                    fileName = localusername+ UUID.randomUUID().toString()+extension;
+                }
+            }
+            String filePath = savePath + File.separator + fileName;
+            // 保存图片
+            image.transferTo(new File(filePath));
+            // 返回图片访问路径
+            String imageUrl = "/images/" + fileName;
+            return Result.succ(imageUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail("图片上传失败");
+        }
+    }
+
+    @ApiOperation("博客搜索接口")
+    @PostMapping("/blog/search")
+    public Result search(@RequestBody Map<String,Object> json,
+                         HttpServletRequest request){
+        String token =request.getHeader("Authorization");
+        String username = String.valueOf(jwtUtils.getTokenInfo(token).getClaim("username")).trim().replace("\"", "");
+        try {
+            User user = userService.searchByname(username);
+            String filter = json.get("filter").toString();
+            List<Blog> blogs = blogService.searchByfilter(filter,user.getId());
+            pageData.setBlogs(blogs);
+            pageData.setCurrent(blogs.size());
+            pageData.setSize(blogs.size());
+            pageData.setTotal(blogs.size());
+            return Result.succ(pageData);
+        }catch (Exception e){
+            return Result.fail("token错误，请重新登录");
+        }
+
     }
 }

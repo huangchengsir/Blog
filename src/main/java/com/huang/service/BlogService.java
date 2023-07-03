@@ -14,4 +14,5 @@ public interface BlogService {
     void Update(Blog blog);
     void DeleteByid(@Param("id") int id);
     void Insert(Blog blog);
+    List<Blog> searchByfilter(@Param("filter") String filter,int id);
 }

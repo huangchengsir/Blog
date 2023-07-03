@@ -26,4 +26,8 @@
     <select id="searchByname" resultType="user">
         select * from user where username = #{name}
     </select>
+    <update id="Updatetime">
+        update user set last_login = CONVERT_TZ(NOW(), '+00:00', '+8:00')
+        where username = #{username};
+    </update>
 </mapper>

@@ -94,4 +94,10 @@ public class UserController {
         User userinfo = userService.searchByid(num);
         return Result.succ(userinfo);
     }
+    @ApiOperation("博客作者获取接口")
+    @GetMapping("/blog")
+    public Result blog(@RequestParam("id") int id){
+        User user = userService.searchByid(id);
+        return Result.succ(user);
+    }
 }

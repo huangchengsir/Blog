@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //mvc配置扩展类
@@ -36,7 +37,9 @@ public class Mvcconfig implements WebMvcConfigurer {
                         "/error",
                         "/webjars/**",
                         "/swagger-resources/**",
-                        "/images/**");
+                        "/images/**",
+                        "/src/**",
+                        "/regis_upload-image");
     }
 
     @Override
@@ -47,5 +50,10 @@ public class Mvcconfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .maxAge(3600)
                 .allowedHeaders("*");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/images/**").addResourceLocations("file:src/main/resources/static/images/");
     }
 }

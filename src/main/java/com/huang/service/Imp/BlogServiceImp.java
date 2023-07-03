@@ -37,4 +37,9 @@ public class BlogServiceImp implements BlogService {
     public void Insert(Blog blog) {
         blogMapper.Insert(blog);
     }
+
+    @Override
+    public List<Blog> searchByfilter(String filter, int id) {
+        return blogMapper.searchByfilter(filter,id);
+    }
 }

@@ -41,4 +41,9 @@ public class UserServiceImp implements UserService {
     public User searchByname(String name) {
         return userMapper.searchByname(name);
     }
+
+    @Override
+    public void Updatetime(String username) {
+        userMapper.Updatetime(username);
+    }
 }

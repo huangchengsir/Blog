@@ -15,4 +15,5 @@ public interface UserMapper {
     void DeleteByid(@Param("id") int id);
     void Insert(User user);
     User searchByname(@Param("name") String name);
+    void Updatetime(@Param("username")String username);
 }

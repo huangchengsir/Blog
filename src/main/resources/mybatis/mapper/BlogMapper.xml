@@ -13,7 +13,7 @@
         update blog set title =#{title},
         user_id=#{user_id},title=#{title},
         description=#{description},content=#{content},
-        created=#{created},status=#{status}
+        created=CONVERT_TZ(NOW(), '+00:00', '+8:00'),status=#{status}
         where id =#{id}
     </update>
     <delete id="DeleteByid">
@@ -23,4 +23,10 @@
         insert into blog (user_id,title,description,content,created,status)
         values(#{user_id},#{title},#{description},#{content},#{created},#{status})
     </insert>
+    <select id="searchByfilter" resultType="Blog">
+        select * from blog
+        where title LIKE CONCAT('%', #{filter}, '%')
+        AND user_id = #{id};
+    </select>
+
 </mapper>
