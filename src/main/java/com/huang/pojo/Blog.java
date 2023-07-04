@@ -20,5 +20,5 @@ public class Blog {
     private String content;
     private LocalDateTime created;
     private int status;
-
+    public String writter;
 }

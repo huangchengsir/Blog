@@ -2,7 +2,6 @@ package com.huang.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
-import com.auth0.jwt.interfaces.Claim;
 import com.github.pagehelper.PageHelper;
 import com.huang.Utils.ChineseScan;
 import com.huang.Utils.JWTUtils;
@@ -14,11 +13,9 @@ import com.huang.service.BlogService;
 import com.huang.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,6 +40,7 @@ public class BlogController {
     @Autowired
     private PageData pageData;
 
+
     @ApiOperation("博客列表拉取接口")
     @GetMapping("/blogs")
     public Result list(@RequestParam(defaultValue = "10") Integer currentPage,
@@ -54,11 +51,20 @@ public class BlogController {
         User user = userService.searchByname(username);
         PageHelper.startPage(1,currentPage);
         List<Blog> blogs = blogService.searchAll(currentPage,user.getId());
-        pageData.setBlogs(blogs);
-        pageData.setCurrent(currentPage);
-        pageData.setSize(blogs.size());
-        pageData.setTotal(blogs.size());
-        return Result.succ(pageData);
+        try {
+            for (Blog blog : blogs) {
+                String blogwritter = userService.searchByid(blog.getUser_id()).getUsername();
+                blog.setWritter(blogwritter);
+            }
+            pageData.setBlogs(blogs);
+            pageData.setCurrent(currentPage);
+            pageData.setSize(blogs.size());
+            pageData.setTotal(blogs.size());
+            return Result.succ(pageData);
+        }
+        catch (Exception e){
+            return Result.fail(e.toString());
+        }
     }
 
     @ApiOperation("博客详细信息接口")
@@ -193,6 +199,10 @@ public class BlogController {
             User user = userService.searchByname(username);
             String filter = json.get("filter").toString();
             List<Blog> blogs = blogService.searchByfilter(filter,user.getId());
+            for (Blog blog : blogs) {
+                String blogwritter = userService.searchByid(blog.getUser_id()).getUsername();
+                blog.setWritter(blogwritter);
+            }
             pageData.setBlogs(blogs);
             pageData.setCurrent(blogs.size());
             pageData.setSize(blogs.size());

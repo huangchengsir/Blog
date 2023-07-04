@@ -73,8 +73,8 @@ class ApplicationTests {
 //        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IjIwMDEwOTA2IiwiZXhwIjoxNjg3Njk4NTA2LCJ1c2VybmFtZSI6IkNoYXJteSJ9.hdOM0qJPVlvyi0ied0RFcnFsC8crrIde3K-iN7Wvzc0";
 //        jwtUtils.verify(token);
 
-        List<Blog> blogs = blogService.searchByfilter("这是我的");
-        System.out.println(blogs.toString());
+//        List<Blog> blogs = blogService.searchByfilter("这是我的");
+//        System.out.println(blogs.toString());
 
 
 
