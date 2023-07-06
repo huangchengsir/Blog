@@ -4,6 +4,7 @@ package com.huang.config.shiro;
 import cn.hutool.json.JSONUtil;
 import com.auth0.jwt.interfaces.Claim;
 import com.huang.Utils.JWTUtils;
+import com.huang.Utils.RedisJsonUtil;
 import com.huang.Utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -31,6 +32,8 @@ public class JwtFilter extends AuthenticatingFilter {
 
     @Autowired
     JWTUtils jwtUtils;
+    @Autowired
+    RedisJsonUtil redisJsonUtil;
 
     @Override
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
@@ -57,7 +60,8 @@ public class JwtFilter extends AuthenticatingFilter {
         } else {
             // 校验jwt
             Claim claim = jwtUtils.getTokenInfo(jwt).getClaim("username");
-            if(claim == null || !jwtUtils.verify(jwt)) {
+            String username = String.valueOf(jwtUtils.getTokenInfo(jwt).getClaim("username")).trim().replace("\"", "");
+            if(claim == null || !jwtUtils.verify(jwt) || redisJsonUtil.get(username,"Authorization") == null) {
                 throw new ExpiredCredentialsException("token已失效，请重新登录");
             }
 

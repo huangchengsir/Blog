@@ -53,7 +53,7 @@ shiro:
 
 #  jwt设置密钥，过期时间
 jwtsetting:
-  expire: 7
+  expire: 1
   secret: Sn%A*&^97sad(*!@#
 
 # PageHelper分页插件

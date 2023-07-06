@@ -1,5 +1,6 @@
 package com.huang;
 
+import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.huang.Dao.UserMapper;
@@ -25,6 +26,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @SpringBootTest
@@ -59,7 +61,8 @@ class ApplicationTests {
 //        System.out.println(redisTemplate.opsForValue().get("xixix"));
 //        Set<String> keys = redisUtil.keys("*");
 //        System.out.println(keys);
-//        System.out.println((String) redisUtil.get("redis键"));
+//        Map map = JSON.parseObject(redisUtil.get("2").toString(), Map.class);
+//        System.out.println(map.get("Authorization").toString());
 //        RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
 //        connection.flushDb();
 //        System.out.println("数据库查询结果"+userServiceImp.searchByname("admin"));

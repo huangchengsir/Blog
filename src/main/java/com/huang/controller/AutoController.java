@@ -1,6 +1,7 @@
 package com.huang.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.huang.Utils.JWTUtils;
 import com.huang.Utils.RedisUtil;
 import com.huang.Utils.Result;
@@ -22,6 +23,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +63,14 @@ public class AutoController {
             subject.login(token);
             hashmap.put("userId",String.valueOf(user.getId()));
             String jwt = jwtUtils.getToken(hashmap);
-            redisUtil.set("Authorization",jwt,10800);
+            HashMap<Object, Object> redismap = new HashMap<>();
+            //存入redis的数据
+            redismap.put("username",username);
+            redismap.put("userid",String.valueOf(user.getId()));
+            redismap.put("Authorization", jwt);
+            redismap.put("logintime", LocalDateTime.now());
+            //存入Redis缓存
+            redisUtil.set(username,JSON.toJSON(redismap),10800);
             Result result = Result.succ(200, "登录成功", user);
             userService.Updatetime(username);
             response.setHeader("Authorization", jwt);

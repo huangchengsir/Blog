@@ -17,7 +17,7 @@ public class ChatGptUtil {
         HttpRequest chat = HttpUtil.createPost("https://openai.nooc.ink/v1/chat/completions");
 //        HttpRequest chat = HttpUtil.createPost("https://openai-openai-cqvpxofrvy.cn-hongkong.fcapp.run/v1/chat/completions");
         chat.header("Content-Type","application/json");
-        chat.header("Authorization","Bearer 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");
+        chat.header("Authorization","Bearer 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");
         HashMap<String, Object> map = new LinkedHashMap<>();
         map.put("model","gpt-3.5-turbo");
         ArrayList<Map> list = new ArrayList<>();
