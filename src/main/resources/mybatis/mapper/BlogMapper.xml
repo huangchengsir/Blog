@@ -5,6 +5,7 @@
 <mapper namespace="com.huang.Dao.BlogMapper">
     <select id="searchAll" resultType="blog" parameterType="Integer">
         select * from blog where user_id = #{id}
+        ORDER BY created desc
     </select>
     <select id="searchByid" resultType="Blog">
         select * from blog where id =#{id}

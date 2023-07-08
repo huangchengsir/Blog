@@ -2,10 +2,9 @@ package com.huang.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.huang.Utils.ChineseScan;
-import com.huang.Utils.JWTUtils;
-import com.huang.Utils.Result;
+import com.huang.Utils.*;
 import com.huang.pojo.Blog;
 import com.huang.pojo.PageData;
 import com.huang.pojo.User;
@@ -39,27 +38,31 @@ public class BlogController {
     private BlogService blogService;
     @Autowired
     private PageData pageData;
+    @Autowired
+    RedisJsonUtil redisJsonUtil;
 
 
     @ApiOperation("博客列表拉取接口")
     @GetMapping("/blogs")
-    public Result list(@RequestParam(defaultValue = "10") Integer currentPage,
+    public Result list(
+                        @RequestParam("currentPage") Integer currentPage,
+                        @RequestParam("pageNum") Integer PageNum,
                         HttpServletRequest request){
         String token =request.getHeader("Authorization");
         String username = String.valueOf(jwtUtils.getTokenInfo(token).getClaim("username")).trim().replace("\"", "");
         log.info("用户名："+username);
         User user = userService.searchByname(username);
-        PageHelper.startPage(1,currentPage);
-        List<Blog> blogs = blogService.searchAll(currentPage,user.getId());
+        Page<Object> page = PageHelper.startPage(currentPage, PageNum);
+        List<Blog> blogs = blogService.searchAll(currentPage,PageNum,user.getId());
         try {
             for (Blog blog : blogs) {
                 String blogwritter = userService.searchByid(blog.getUser_id()).getUsername();
                 blog.setWritter(blogwritter);
             }
             pageData.setBlogs(blogs);
-            pageData.setCurrent(currentPage);
-            pageData.setSize(blogs.size());
-            pageData.setTotal(blogs.size());
+            pageData.setCurrent(page.getPages());
+            pageData.setSize(page.getPageSize());
+            pageData.setTotal((int)page.getTotal());
             return Result.succ(pageData);
         }
         catch (Exception e){
@@ -105,10 +108,19 @@ public class BlogController {
     }
     @ApiOperation("博客删除接口提供")
     @PostMapping("/blogs/delete")
-    public Result delete(@RequestParam("id")int blogid){
+    public Result delete(@RequestParam("id")int blogid,
+                         HttpServletRequest request){
         log.info("进入了删除博客方法");
-        blogService.DeleteByid(blogid);
-        return Result.succ("删除成功");
+        String token =request.getHeader("Authorization");
+        String localusername = String.valueOf(jwtUtils.getTokenInfo(token).getClaim("username")).trim().replace("\"", "");
+        int userid = Integer.parseInt(redisJsonUtil.get(localusername, "userid"));
+        Blog blog = blogService.searchByid(blogid);
+        if(blog.getUser_id() == userid){
+            blogService.DeleteByid(blogid);
+            return Result.succ("删除成功");
+        }else {
+            return Result.fail("您没有权限删除当前博客");
+        }
     }
 
     @ApiOperation("图片上传接口")

@@ -14,8 +14,8 @@ public class BlogServiceImp implements BlogService {
     @Autowired
     private BlogMapper blogMapper;
     @Override
-    public List<Blog> searchAll(Integer page ,int id) {
-        return blogMapper.searchAll(page, id);
+    public List<Blog> searchAll(Integer pagenum,Integer pagesize, int id) {
+        return blogMapper.searchAll(pagenum,pagesize, id);
     }
 
     @Override
