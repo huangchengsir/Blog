@@ -8,7 +8,9 @@ import com.huang.Utils.*;
 import com.huang.pojo.Blog;
 import com.huang.pojo.PageData;
 import com.huang.pojo.User;
+import com.huang.service.AuthSearch;
 import com.huang.service.BlogService;
+import com.huang.service.SysService;
 import com.huang.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,10 @@ public class BlogController {
     private PageData pageData;
     @Autowired
     RedisJsonUtil redisJsonUtil;
+    @Autowired
+    SysService sysService;
+    @Autowired
+    AuthSearch authSearch;
 
 
     @ApiOperation("博客列表拉取接口")
@@ -52,13 +58,27 @@ public class BlogController {
         String username = String.valueOf(jwtUtils.getTokenInfo(token).getClaim("username")).trim().replace("\"", "");
         log.info("用户名："+username);
         User user = userService.searchByname(username);
-        Page<Object> page = PageHelper.startPage(currentPage, PageNum);
-        List<Blog> blogs = blogService.searchAll(currentPage,PageNum,user.getId());
+        int otherblog;
+        if(sysService.search(user.getId())==null){
+            otherblog=0;
+        }else {
+            otherblog=sysService.search(user.getId()).getOtherblog();
+        }
+        List<Blog> blogs;
+        Page<Object> page;
+        if(otherblog ==1){
+            page = PageHelper.startPage(currentPage, PageNum);
+            blogs = blogService.searchAll(currentPage,PageNum,user.getId());
+        }else {
+            page = PageHelper.startPage(currentPage, PageNum);
+            blogs = blogService.searchOwn(currentPage,PageNum,user.getId());
+        }
         try {
             for (Blog blog : blogs) {
                 String blogwritter = userService.searchByid(blog.getUser_id()).getUsername();
                 blog.setWritter(blogwritter);
             }
+
             pageData.setBlogs(blogs);
             pageData.setCurrent(page.getPages());
             pageData.setSize(page.getPageSize());
@@ -72,11 +92,24 @@ public class BlogController {
 
     @ApiOperation("博客详细信息接口")
     @GetMapping("/blog/{id}")
-    public Result list(@PathVariable(name = "id") int id){
+    public Result list(@PathVariable(name = "id") int id
+                       ){
         Blog blog = blogService.searchByid(id);
-        Assert.notNull(blog,"该博客已被删除");
-
-        return Result.succ(blog);
+            Assert.notNull(blog,"该博客已被删除");
+            return Result.succ(blog);
+    }
+    @ApiOperation("博客编辑信息接口")
+    @GetMapping("/blog/info/{id}")
+    public Result listinfo(@PathVariable(name = "id") int id,
+                       HttpServletRequest request){
+        Blog blog = blogService.searchByid(id);
+        if(authSearch.blogauth(request,blog.getUser_id())){
+            Assert.notNull(blog,"该博客已被删除");
+            return Result.succ(blog);
+        }else {
+            Assert.notNull(blog,"该博客已被删除");
+            return Result.fail("没有权限编辑当前博客");
+        }
     }
 
     @ApiOperation("博客编辑接口")
@@ -207,10 +240,23 @@ public class BlogController {
                          HttpServletRequest request){
         String token =request.getHeader("Authorization");
         String username = String.valueOf(jwtUtils.getTokenInfo(token).getClaim("username")).trim().replace("\"", "");
+        //公开权限博客查询
+        log.info("用户名："+username);
+        User user = userService.searchByname(username);
+        String filter = json.get("filter").toString();
+        int otherblog;
+        if(sysService.search(user.getId())==null){
+            otherblog=0;
+        }else {
+            otherblog=sysService.search(user.getId()).getOtherblog();
+        }
+        List<Blog> blogs;
+        if(otherblog ==1){
+            blogs = blogService.searchByOwnfilter(filter,user.getId());
+        }else {
+            blogs = blogService.searchByfilter(filter,user.getId());
+        }
         try {
-            User user = userService.searchByname(username);
-            String filter = json.get("filter").toString();
-            List<Blog> blogs = blogService.searchByfilter(filter,user.getId());
             for (Blog blog : blogs) {
                 String blogwritter = userService.searchByid(blog.getUser_id()).getUsername();
                 blog.setWritter(blogwritter);

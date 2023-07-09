@@ -4,7 +4,13 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huang.Dao.BlogMapper">
     <select id="searchAll" resultType="blog" parameterType="Integer">
-        select * from blog where user_id = #{id}
+        select * from blog
+        where user_id = #{id} OR status = 1
+        ORDER BY created desc
+    </select>
+    <select id="searchOwn" resultType="blog" parameterType="Integer">
+        select * from blog
+        where user_id = #{id}
         ORDER BY created desc
     </select>
     <select id="searchByid" resultType="Blog">
@@ -29,5 +35,17 @@
         where title LIKE CONCAT('%', #{filter}, '%')
         AND user_id = #{id};
     </select>
+    <select id="searchByOwnfilter" resultType="Blog">
+        select * from blog
+        where title LIKE CONCAT('%', #{filter}, '%')
+        AND (user_id = #{id} OR status = 1);
+    </select>
+    <update id="Updatestatus">
+        update blog
+        set status = #{status}
+        where id = #{id}
+
+    </update>
+
 
 </mapper>

@@ -42,4 +42,19 @@ public class BlogServiceImp implements BlogService {
     public List<Blog> searchByfilter(String filter, int id) {
         return blogMapper.searchByfilter(filter,id);
     }
+
+    @Override
+    public List<Blog> searchByOwnfilter(String filter, int id) {
+        return blogMapper.searchByOwnfilter(filter,id);
+    }
+
+    @Override
+    public void Updatestatus(int id,int status) {
+        blogMapper.Updatestatus(id,status);
+    }
+
+    @Override
+    public List<Blog> searchOwn(Integer pagenum, Integer pagesize, int id) {
+        return blogMapper.searchOwn(pagenum, pagesize, id);
+    }
 }

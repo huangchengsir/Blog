@@ -17,4 +17,7 @@ public interface BlogMapper {
     void DeleteByid(@Param("id") int id);
     void Insert(Blog blog);
     List<Blog> searchByfilter(@Param("filter") String filter,int id);
+    List<Blog> searchByOwnfilter(@Param("filter") String filter,int id);
+    void Updatestatus(int id,int status);
+    List<Blog> searchOwn(Integer pagenum,Integer pagesize, int id);
 }

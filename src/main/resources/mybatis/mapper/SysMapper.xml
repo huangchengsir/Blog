@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.Dao.SysMapper">
+    <select id="search" resultType="SysSetting">
+        select * from sysauth
+        where user_id = #{user_id}
+    </select>
+    <update id="UpdateSetting">
+        update sysauth
+        set otherblog = #{otherblog}
+        where user_id = #{user_id}
+    </update>
+    <insert id="insert">
+        insert into sysauth(user_id,otherblog)
+        value(#{user_id},#{otherblog})
+    </insert>
+
+</mapper>

@@ -4,16 +4,16 @@ package com.huang.controller;
 import com.huang.Utils.JWTUtils;
 import com.huang.Utils.RedisUtil;
 import com.huang.Utils.Result;
+import com.huang.pojo.SysSetting;
 import com.huang.pojo.User;
+import com.huang.service.SysService;
 import com.huang.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 
 @RestController
 @Slf4j
@@ -27,6 +27,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private SysService sysService;
     @ApiOperation("用户注册接口")
     @PostMapping("/register")
     public Result regis(@RequestParam("username") String username,
@@ -67,15 +69,6 @@ public class UserController {
                 user.setEmail(email);
                 user.setPassword(password);
                 userService.Update(user);
-//                HashMap<String, String> hashmap = new HashMap<>();
-//                //获取用户id
-//                hashmap.put("username",username);
-//                hashmap.put("password",password);
-//                hashmap.put("userId",String.valueOf(id));
-//                String jwt = jwtUtils.getToken(hashmap);
-//                redisUtil.set("Authorization",jwt,10800);
-//                response.setHeader("Authorization", jwt);
-//                response.setHeader("Access-control-Expose-Headers", "Authorization, Set-Cookie");
                 return Result.succ("修改成功");
             }
             else{
@@ -100,4 +93,34 @@ public class UserController {
         User user = userService.searchByid(id);
         return Result.succ(user);
     }
+    @ApiOperation("系统设置获取接口")
+    @GetMapping("/setting")
+    public Result setting(@RequestParam("id") int id){
+        try{
+            SysSetting search = sysService.search(id);
+            if(search==null){
+                return Result.succ(new SysSetting(1,id,0));
+            }else {
+                return Result.succ(search);
+            }
+        }catch (Exception e){
+            return Result.fail(e.toString());
+        }
+    }
+    @ApiOperation("系统设置修改接口")
+    @GetMapping("/setting/change")
+    public Result change(@RequestParam("id") int id,
+                         @RequestParam("otherblog") int otherblog){
+        try {
+            SysSetting search = sysService.search(id);
+            if(search==null){
+                sysService.insert(id, otherblog);
+            }else {
+                sysService.UpdateSetting(id, otherblog);
+            }
+            return Result.succ("配置保存成功");
+        }catch (Exception e){
+            return Result.fail(e.toString());
+    }
+}
 }

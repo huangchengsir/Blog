@@ -18,9 +18,9 @@ public class Testclass {
 //        jwtUtils.setExpire(7);
 //        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IjIwMDEwOTA2IiwiZXhwIjoxNjg4ODAyNzIyLCJ1c2VybmFtZSI6IkNoYXJteSJ9.v1UnFoqRC_TEc_gCvWf838Onw1TXbb5MN1-uhbmIUU8";
 //        jwtUtils.verify(token);
-        BlogService blogService = new BlogServiceImp();
-        List<Blog> blogs = blogService.searchAll(5,1);
-        System.out.println(blogs.toString());
+//        BlogService blogService = new BlogServiceImp();
+//        List<Blog> blogs = blogService.searchAll(5,1);
+//        System.out.println(blogs.toString());
 
     }
 }
