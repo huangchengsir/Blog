@@ -28,7 +28,7 @@
     </delete>
     <insert id="Insert" parameterType="blog">
         insert into blog (user_id,title,description,content,created,status)
-        values(#{user_id},#{title},#{description},#{content},#{created},#{status})
+        values(#{user_id},#{title},#{description},#{content},CONVERT_TZ(NOW(), '+00:00', '+8:00'),#{status})
     </insert>
     <select id="searchByfilter" resultType="Blog">
         select * from blog

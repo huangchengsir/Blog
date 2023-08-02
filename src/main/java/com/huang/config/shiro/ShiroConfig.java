@@ -67,8 +67,4 @@ public class ShiroConfig {
     public Realme realme(){
         return new Realme();
     }
-//    @Bean
-//    public CustmAuthenticatingFilter custmAuthenticatingFilter(){
-//        return new CustmAuthenticatingFilter();
-//    }
 }

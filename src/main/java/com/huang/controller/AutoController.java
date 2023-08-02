@@ -49,6 +49,7 @@ public class AutoController {
         String username = (String) map.get("username");
         String password = (String) map.get("password");
         log.info("登录传入密码为:"+password);
+        //获取当前用户对象subject，shiro自带方法
         Subject subject = SecurityUtils.getSubject();
         String Md5pwd = DigestUtils.md5DigestAsHex(password.getBytes()).toUpperCase();
         UsernamePasswordToken token = new UsernamePasswordToken(username,Md5pwd);

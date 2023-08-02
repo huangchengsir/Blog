@@ -132,6 +132,7 @@ public class BlogController {
             tmp = new Blog();
             tmp.setUser_id(id);
             tmp.setCreated(LocalDateTime.now());
+            log.info(LocalDateTime.now().toString());
             tmp.setStatus(0);
             BeanUtil.copyProperties(blog, tmp, "id", "user_id", "created", "status");
             log.info(tmp.toString());
@@ -174,7 +175,6 @@ public class BlogController {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-
         try {
             // 生成保存图片的文件路径
             String fileName = image.getOriginalFilename();
