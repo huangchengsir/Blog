@@ -35,6 +35,5 @@ public class ChatGptUtil {
         Map mess = (Map) choices.get(0);
         Map message = (Map) mess.get("message");
         return message.get("content").toString();
-
     }
 }

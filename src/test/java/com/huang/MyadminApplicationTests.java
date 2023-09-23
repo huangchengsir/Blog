@@ -13,6 +13,7 @@ import com.huang.service.BlogService;
 import com.huang.service.Imp.BlogServiceImp;
 import com.huang.service.Imp.UserServiceImp;
 import com.huang.service.UserService;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.DigestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ class ApplicationTests {
 //        List<Blog> blogs = blogService.searchByfilter("这是我的");
 //        System.out.println(blogs.toString());
 
-
+        new ClassPathXmlApplicationContext();
 
     }
 

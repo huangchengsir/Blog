@@ -1,8 +1,9 @@
-FROM java:8
+FROM kdvolder/jdk8
 
-EXPOSE 8080
+EXPOSE 8081
 
-ADD vueblog-0.0.1-SNAPSHOT.jar app.jar
-RUN bash -c 'touch /app.jar'
+VOLUME /docker/tmp:/log
 
-ENTRYPOINT ["java", "-jar", "/app.jar", "--spring.profiles.active=pro"]
+ADD Blog-0.0.1-SNAPSHOT.jar app.jar
+
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
