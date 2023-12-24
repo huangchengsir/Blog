@@ -2,6 +2,9 @@ package com.huang.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.huang.Annotation.ParamCheck;
+import com.huang.Annotation.SmartValidation;
+import com.huang.Dto.LoginDto;
 import com.huang.Utils.JWTUtils;
 import com.huang.Utils.RedisUtil;
 import com.huang.Utils.Result;
@@ -27,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @RestController
 @Slf4j
@@ -43,11 +47,12 @@ public class AutoController {
 
     @ApiOperation("博客登录接口")
     @PostMapping("/login")
-    public Result Login(@RequestBody Map<String,Object> map,
+    @ParamCheck
+    public Result Login(@RequestBody LoginDto map,
                         HttpServletResponse response
                         ){
-        String username = (String) map.get("username");
-        String password = (String) map.get("password");
+        String username =  map.getUsername();
+        String password =  map.getPassword();
         log.info("登录传入密码为:"+password);
         //获取当前用户对象subject，shiro自带方法
         Subject subject = SecurityUtils.getSubject();
